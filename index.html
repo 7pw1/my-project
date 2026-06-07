@@ -3722,9 +3722,12 @@
                 <button class="map-close-btn" onclick="closeMapPanel()"><i class="fa fa-times"></i></button>
             </div>
         </div>
-        <div style="padding: 10px 16px 6px; display:flex; justify-content:center;">
-            <button class="ar-btn" onclick="openARNav()" style="position:static;transform:none;width:100%;justify-content:center;">
+        <div style="padding: 10px 16px 6px; display:flex; gap:10px; justify-content:center;">
+            <button class="ar-btn" onclick="openARNav()" style="position:static;transform:none;flex:1;justify-content:center;">
                 <i class="fa fa-camera"></i> تنقل بالواقع المعزز
+            </button>
+            <button class="ar-btn" onclick="openChargingPage()" style="position:static;transform:none;flex:1;justify-content:center;background:linear-gradient(135deg,#00b894,#55efc4);">
+                <i class="fa fa-bolt"></i> منصات الشحن
             </button>
         </div>
         <div class="map-iframe-wrapper" style="position:relative;">
@@ -4534,6 +4537,10 @@
         duty_free:  { label: 'الدوتي فري', steps: ['اجتز نقطة الأمن', 'الدوتي فري أمامك مباشرة'], dist: '30 متر' },
     };
 
+    function openChargingPage() {
+        openGenericPage('charging');
+    }
+
     function openARNav() {
         const overlay = document.getElementById('arOverlay');
         overlay.classList.add('active');
@@ -4995,10 +5002,10 @@
     <div class="tab-page" id="page-tickets">
         <div class="page-back-bar">
             <div class="page-back-btn" onclick="goBackToHome()"><i class="fa fa-arrow-right"></i></div>
-            <div class="page-back-title">تذاكري</div>
+            <div class="page-back-title">تذاكري </div>
         </div>
         <div class="tkt-header">
-            <div class="tkt-header-title">تذاكري</div>
+            <div class="tkt-header-title"> تذاكري</div>
             <button class="tkt-bell-btn">
                 <i class="fa fa-bell"></i>
                 <div class="tkt-bell-dot"></div>
@@ -5583,6 +5590,148 @@
             <p id="confirmMsg">هل تريد المتابعة؟</p>
             <button class="confirm-btn" onclick="doConfirm()">تأكيد ✓</button>
             <button class="confirm-cancel" onclick="document.getElementById('confirmOverlay').classList.remove('active')">إلغاء</button>
+        </div>
+    </div>
+
+
+    <!-- ===== صفحة منصات الشحن ===== -->
+    <div class="tab-page" id="page-charging">
+        <div class="page-back-bar">
+            <div class="page-back-btn" onclick="goBackToHome()"><i class="fa fa-arrow-right"></i></div>
+            <div class="page-back-title">منصات الشحن</div>
+        </div>
+        <div class="tab-header">
+            <h2><i class="fa fa-bolt"></i>منصات الشحن</h2>
+            <p>اشحن أجهزتك بسهولة في أي مكان بالمطار</p>
+        </div>
+        <div class="tab-body">
+
+            <!-- إحصائيات سريعة -->
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;">
+                <div style="background:rgba(255,255,255,0.88);border-radius:16px;padding:14px 10px;text-align:center;box-shadow:0 4px 16px rgba(0,184,148,0.08);">
+                    <div style="font-size:22px;font-weight:800;color:#00b894;">24</div>
+                    <div style="font-size:10px;color:#7a8fa3;font-weight:600;margin-top:2px;">منصة شحن</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.88);border-radius:16px;padding:14px 10px;text-align:center;box-shadow:0 4px 16px rgba(0,184,148,0.08);">
+                    <div style="font-size:22px;font-weight:800;color:#00b894;">4</div>
+                    <div style="font-size:10px;color:#7a8fa3;font-weight:600;margin-top:2px;">صالات</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.88);border-radius:16px;padding:14px 10px;text-align:center;box-shadow:0 4px 16px rgba(0,184,148,0.08);">
+                    <div style="font-size:22px;font-weight:800;color:#00b894;">مجاني</div>
+                    <div style="font-size:10px;color:#7a8fa3;font-weight:600;margin-top:2px;">الاستخدام</div>
+                </div>
+            </div>
+
+            <!-- بطاقة الصالة 1 -->
+            <div class="info-card" style="margin-bottom:14px;">
+                <div class="info-card-title"><i class="fa fa-bolt" style="color:#00b894;"></i>صالة 1 — المغادرة الداخلية</div>
+                <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(0,184,148,0.05);border-radius:12px;padding:12px 14px;border:1px solid rgba(0,184,148,0.12);">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#00b894,#55efc4);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fa fa-bolt" style="color:#fff;font-size:14px;"></i></div>
+                            <div>
+                                <div style="font-size:13px;font-weight:700;color:#2c3e50;">منصة A1 — بجانب بوابة 12</div>
+                                <div style="font-size:11px;color:#7a8fa3;margin-top:2px;"><i class="fa fa-plug" style="color:#00b894;margin-left:4px;"></i>USB-A · USB-C · مقبس كهربائي</div>
+                            </div>
+                        </div>
+                        <span style="font-size:10px;font-weight:700;color:#00b894;background:rgba(0,184,148,0.1);padding:4px 8px;border-radius:20px;">متاحة</span>
+                    </div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(0,184,148,0.05);border-radius:12px;padding:12px 14px;border:1px solid rgba(0,184,148,0.12);">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#00b894,#55efc4);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fa fa-bolt" style="color:#fff;font-size:14px;"></i></div>
+                            <div>
+                                <div style="font-size:13px;font-weight:700;color:#2c3e50;">منصة A2 — صالة الانتظار</div>
+                                <div style="font-size:11px;color:#7a8fa3;margin-top:2px;"><i class="fa fa-plug" style="color:#00b894;margin-left:4px;"></i>USB-A · USB-C · مقبس كهربائي</div>
+                            </div>
+                        </div>
+                        <span style="font-size:10px;font-weight:700;color:#00b894;background:rgba(0,184,148,0.1);padding:4px 8px;border-radius:20px;">متاحة</span>
+                    </div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(231,86,86,0.04);border-radius:12px;padding:12px 14px;border:1px solid rgba(231,86,86,0.10);">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#e75656,#fd79a8);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fa fa-bolt" style="color:#fff;font-size:14px;"></i></div>
+                            <div>
+                                <div style="font-size:13px;font-weight:700;color:#2c3e50;">منصة A3 — قرب المطاعم</div>
+                                <div style="font-size:11px;color:#7a8fa3;margin-top:2px;"><i class="fa fa-plug" style="color:#e75656;margin-left:4px;"></i>USB-A · USB-C</div>
+                            </div>
+                        </div>
+                        <span style="font-size:10px;font-weight:700;color:#e75656;background:rgba(231,86,86,0.08);padding:4px 8px;border-radius:20px;">مشغولة</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- بطاقة الصالة 3 -->
+            <div class="info-card" style="margin-bottom:14px;">
+                <div class="info-card-title"><i class="fa fa-bolt" style="color:#00b894;"></i>صالة 3 — المغادرة الدولية</div>
+                <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(0,184,148,0.05);border-radius:12px;padding:12px 14px;border:1px solid rgba(0,184,148,0.12);">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#00b894,#55efc4);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fa fa-bolt" style="color:#fff;font-size:14px;"></i></div>
+                            <div>
+                                <div style="font-size:13px;font-weight:700;color:#2c3e50;">منصة B1 — بجانب بوابة 30</div>
+                                <div style="font-size:11px;color:#7a8fa3;margin-top:2px;"><i class="fa fa-plug" style="color:#00b894;margin-left:4px;"></i>USB-A · USB-C · Wireless</div>
+                            </div>
+                        </div>
+                        <span style="font-size:10px;font-weight:700;color:#00b894;background:rgba(0,184,148,0.1);padding:4px 8px;border-radius:20px;">متاحة</span>
+                    </div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(0,184,148,0.05);border-radius:12px;padding:12px 14px;border:1px solid rgba(0,184,148,0.12);">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#00b894,#55efc4);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fa fa-bolt" style="color:#fff;font-size:14px;"></i></div>
+                            <div>
+                                <div style="font-size:13px;font-weight:700;color:#2c3e50;">منصة B2 — صالة الانتظار الكبرى</div>
+                                <div style="font-size:11px;color:#7a8fa3;margin-top:2px;"><i class="fa fa-plug" style="color:#00b894;margin-left:4px;"></i>USB-A · USB-C · مقبس كهربائي · Wireless</div>
+                            </div>
+                        </div>
+                        <span style="font-size:10px;font-weight:700;color:#00b894;background:rgba(0,184,148,0.1);padding:4px 8px;border-radius:20px;">متاحة</span>
+                    </div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(0,184,148,0.05);border-radius:12px;padding:12px 14px;border:1px solid rgba(0,184,148,0.12);">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#00b894,#55efc4);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fa fa-bolt" style="color:#fff;font-size:14px;"></i></div>
+                            <div>
+                                <div style="font-size:13px;font-weight:700;color:#2c3e50;">منصة B3 — قرب الدوار التجاري</div>
+                                <div style="font-size:11px;color:#7a8fa3;margin-top:2px;"><i class="fa fa-plug" style="color:#00b894;margin-left:4px;"></i>USB-A · USB-C · مقبس كهربائي</div>
+                            </div>
+                        </div>
+                        <span style="font-size:10px;font-weight:700;color:#00b894;background:rgba(0,184,148,0.1);padding:4px 8px;border-radius:20px;">متاحة</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- بطاقة الصالة 4 -->
+            <div class="info-card" style="margin-bottom:14px;">
+                <div class="info-card-title"><i class="fa fa-bolt" style="color:#00b894;"></i>صالة 4 — الوصول الدولي</div>
+                <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(0,184,148,0.05);border-radius:12px;padding:12px 14px;border:1px solid rgba(0,184,148,0.12);">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#00b894,#55efc4);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fa fa-bolt" style="color:#fff;font-size:14px;"></i></div>
+                            <div>
+                                <div style="font-size:13px;font-weight:700;color:#2c3e50;">منصة C1 — بعد الجوازات</div>
+                                <div style="font-size:11px;color:#7a8fa3;margin-top:2px;"><i class="fa fa-plug" style="color:#00b894;margin-left:4px;"></i>USB-A · USB-C · مقبس كهربائي</div>
+                            </div>
+                        </div>
+                        <span style="font-size:10px;font-weight:700;color:#00b894;background:rgba(0,184,148,0.1);padding:4px 8px;border-radius:20px;">متاحة</span>
+                    </div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(0,184,148,0.05);border-radius:12px;padding:12px 14px;border:1px solid rgba(0,184,148,0.12);">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#00b894,#55efc4);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fa fa-bolt" style="color:#fff;font-size:14px;"></i></div>
+                            <div>
+                                <div style="font-size:13px;font-weight:700;color:#2c3e50;">منصة C2 — صالة الحقائب</div>
+                                <div style="font-size:11px;color:#7a8fa3;margin-top:2px;"><i class="fa fa-plug" style="color:#00b894;margin-left:4px;"></i>USB-A · USB-C</div>
+                            </div>
+                        </div>
+                        <span style="font-size:10px;font-weight:700;color:#f0a830;background:rgba(240,168,48,0.1);padding:4px 8px;border-radius:20px;">قريباً</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ملاحظة -->
+            <div style="background:rgba(0,184,148,0.07);border-radius:14px;padding:14px 16px;border:1px solid rgba(0,184,148,0.15);display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;">
+                <i class="fa fa-info-circle" style="color:#00b894;font-size:16px;margin-top:2px;flex-shrink:0;"></i>
+                <div>
+                    <div style="font-size:12px;font-weight:700;color:#2c3e50;margin-bottom:3px;">خدمة مجانية</div>
+                    <div style="font-size:11px;color:#7a8fa3;line-height:1.6;">جميع منصات الشحن مجانية للمسافرين. الاستخدام المقترح لا يتجاوز 30 دقيقة لضمان إتاحة المنصة للجميع.</div>
+                </div>
+            </div>
+
         </div>
     </div>
 
