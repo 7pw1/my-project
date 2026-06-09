@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title> وجهة</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -26,10 +26,9 @@
         }
 
         .container {
-            width: 390px;
-            max-width: 390px;
+            width: 100%;
+            max-width: 100%;
             min-height: 100vh;
-            min-height: 844px;
             position: relative;
             overflow-x: hidden;
             background: linear-gradient(
@@ -43,7 +42,7 @@
                 #d4e3ff 78%,
                 #d1e3ff 100%
             );
-            box-shadow: 0 0 60px rgba(61, 78, 97, 0.15);
+            box-shadow: none;
         }
         @media (max-width: 390px) {
             .container {
@@ -57,9 +56,8 @@
             content: '';
             position: fixed;
             top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 390px;
+            left: 0;
+            width: 100%;
             height: 100vh;
             z-index: 0;
             pointer-events: none;
@@ -1518,10 +1516,10 @@
         .map-panel {
             position: fixed;
             bottom: 0;
-            left: 50%;
-            transform: translateX(-50%) translateY(100%);
+            left: 0;
+            transform: translateY(100%);
             width: 100%;
-            max-width: 390px;
+            max-width: 100%;
             height: 88vh;
             background: linear-gradient(180deg, #FFFFFF 0%, #F0EFFA 100%);
             border-radius: 28px 28px 0 0;
@@ -1533,7 +1531,7 @@
             overflow: hidden;
         }
         .map-panel.active {
-            transform: translateX(-50%) translateY(0);
+            transform: translateY(0);
         }
         .map-panel-header {
             padding: 16px 18px 12px;
@@ -1615,10 +1613,10 @@
         .currency-panel {
             position: fixed;
             bottom: 0;
-            left: 50%;
-            transform: translateX(-50%) translateY(100%);
+            left: 0;
+            transform: translateY(100%);
             width: 100%;
-            max-width: 390px;
+            max-width: 100%;
             background: linear-gradient(180deg, #FFFFFF 0%, #F0EFFA 40%, #E5E4F5 100%);
             border-radius: 28px 28px 0 0;
             padding: 20px 18px 32px;
@@ -1627,7 +1625,7 @@
             box-shadow: 0 -8px 40px rgba(86, 120, 229, 0.12);
         }
         .currency-panel.active {
-            transform: translateX(-50%) translateY(0);
+            transform: translateY(0);
         }
 
         .currency-handle {
@@ -3195,7 +3193,7 @@
 
     <!-- شبكة الأيقونات -->
     <div class="grid-menu">
-        <div class="menu-item" onclick="openTicketsPage()" style="cursor:pointer;"><i class="fa fa-ticket-alt icon-tickets"></i><span>تذاكري</span></div>
+        <div class="menu-item" onclick="openTicketsPage()" style="cursor:pointer;"><i class="fa fa-ticket-alt icon-tickets"></i><span>التذاكر</span></div>
         <div class="menu-item" onclick="openMapPanel()" style="cursor:pointer;"><i class="fa fa-map-marked-alt icon-map"></i><span>خريطتك</span></div>
         <div class="menu-item" onclick="openHelpPage()" style="cursor:pointer;"><i class="fa fa-headset icon-help"></i><span>طلب مساعدة</span></div>
         <div class="menu-item" onclick="openHotelsPage()" style="cursor:pointer;"><i class="fa fa-hotel icon-hotels"></i><span>فنادق</span></div>
@@ -4174,14 +4172,13 @@
         }
     }
 
-    // تشغيل عند فتح صفحة التذاكر
+    // تشغيل عند فتح صفحة التذاكر (QR ينتقل لصفحة تذكرتي)
     const origOpenTickets = openTicketsPage;
     openTicketsPage = function() {
         origOpenTickets();
-        setTimeout(() => {
-            drawQR();
-            startTktCountdown();
-        }, 100);
+        const today = new Date().toISOString().split('T')[0];
+        const deptEl = document.getElementById('departDate');
+        if (deptEl && !deptEl.value) deptEl.value = today;
     };
 
     // ===== تذاكري وطلب مساعدة =====
@@ -4539,6 +4536,113 @@
 
     function openChargingPage() {
         openGenericPage('charging');
+    }
+
+
+    // ===== صفحة تذكرتي =====
+    function openMyTicketPage() {
+        document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+        const page = document.getElementById('page-my-ticket');
+        page.classList.add('active');
+        page.scrollTop = 0;
+        Object.values(navLinks).forEach(id => document.getElementById(id).classList.remove('active'));
+        currentPage = 'my-ticket';
+        setTimeout(() => {
+            drawQR();
+            startTktCountdown();
+        }, 100);
+    }
+
+    function goBackToTickets() {
+        document.getElementById('page-my-ticket').classList.remove('active');
+        openGenericPage('tickets');
+    }
+
+    // ===== دوال شراء التذاكر =====
+    let passengerCount = 1;
+    let tripType = 'oneway';
+    let selectedCabin = 'economy';
+
+    function selectTripType(type) {
+        tripType = type;
+        document.getElementById('btnOneWay').style.background = type === 'oneway' ? '#5678E5' : 'rgba(255,255,255,0.7)';
+        document.getElementById('btnOneWay').style.color = type === 'oneway' ? '#fff' : '#7a8fa3';
+        document.getElementById('btnRoundTrip').style.background = type === 'round' ? '#5678E5' : 'rgba(255,255,255,0.7)';
+        document.getElementById('btnRoundTrip').style.color = type === 'round' ? '#fff' : '#7a8fa3';
+        document.getElementById('returnDateWrap').style.display = type === 'round' ? 'block' : 'none';
+    }
+
+    function swapCities() {
+        const from = document.getElementById('fromCity');
+        const to = document.getElementById('toCity');
+        if (from && to) {
+            const tmp = from.value;
+            from.value = to.value;
+            to.value = tmp;
+        }
+    }
+
+    function changePassengers(delta) {
+        passengerCount = Math.max(1, Math.min(9, passengerCount + delta));
+        const el = document.getElementById('passengerCount');
+        if (el) el.textContent = passengerCount;
+    }
+
+    function selectCabin(cabin) {
+        selectedCabin = cabin;
+        ['economy','business','first'].forEach(c => {
+            const btn = document.getElementById('cabin-' + c);
+            if (!btn) return;
+            if (c === cabin) {
+                btn.style.border = '1.5px solid #5678E5';
+                btn.style.background = 'rgba(86,120,229,0.08)';
+                btn.style.color = '#5678E5';
+            } else {
+                btn.style.border = '1.5px solid rgba(86,120,229,0.12)';
+                btn.style.background = 'rgba(255,255,255,0.7)';
+                btn.style.color = '#7a8fa3';
+            }
+        });
+    }
+
+    function searchFlights() {
+        const from = document.getElementById('fromCity')?.value || '';
+        const to = document.getElementById('toCity')?.value || '';
+        if (!to.trim()) {
+            const toEl = document.getElementById('toCity');
+            if (toEl) { toEl.style.borderColor = 'rgba(231,86,86,0.5)'; setTimeout(() => toEl.style.borderColor = '', 2000); }
+            return;
+        }
+        const today = new Date().toISOString().split('T')[0];
+        const deptEl = document.getElementById('departDate');
+        if (deptEl && !deptEl.value) deptEl.value = today;
+        const results = document.getElementById('flightResults');
+        if (results) results.style.display = 'block';
+        const bookWrap = document.getElementById('bookBtnWrap');
+        if (bookWrap) bookWrap.style.display = 'none';
+        document.querySelectorAll('.flight-result-card').forEach(c => {
+            c.style.border = '2px solid transparent';
+        });
+    }
+
+    function selectFlight(el, code, airline, dep, arr, price) {
+        document.querySelectorAll('.flight-result-card').forEach(c => {
+            c.style.border = '2px solid transparent';
+        });
+        el.style.border = '2px solid #5678E5';
+        const wrap = document.getElementById('bookBtnWrap');
+        if (wrap) wrap.style.display = 'block';
+        const txt = document.getElementById('selectedFlightText');
+        if (txt) txt.textContent = airline + ' · ' + code + ' · ' + dep + ' → ' + arr + ' · ' + price + ' ر.س';
+        wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function proceedToPayment() {
+        const toast = document.createElement('div');
+        toast.style.cssText = 'position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#5678E5,#7B6FD4);color:#fff;padding:12px 24px;border-radius:14px;font-family:Tajawal,sans-serif;font-weight:700;font-size:13px;z-index:99999;box-shadow:0 8px 24px rgba(86,120,229,0.35);';
+        toast.textContent = '✓ جاري تحويلك لبوابة الدفع...';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2500);
     }
 
     function openARNav() {
@@ -5002,10 +5106,221 @@
     <div class="tab-page" id="page-tickets">
         <div class="page-back-bar">
             <div class="page-back-btn" onclick="goBackToHome()"><i class="fa fa-arrow-right"></i></div>
-            <div class="page-back-title">تذاكري </div>
+            <div class="page-back-title">التذاكر</div>
         </div>
         <div class="tkt-header">
-            <div class="tkt-header-title"> تذاكري</div>
+            <div class="tkt-header-title">شراء تذاكر</div>
+            <button class="tkt-bell-btn">
+                <i class="fa fa-plane-departure"></i>
+            </button>
+        </div>
+        <div class="tkt-body">
+
+            <!-- زر تذكرتي (نفس شكل زر الواقع المعزز) -->
+            <div style="display:flex;gap:10px;margin-bottom:18px;">
+                <button onclick="openMyTicketPage()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#5678E5,#9b8cf7);color:#fff;border:none;border-radius:20px;padding:13px 18px;font-family:Tajawal,sans-serif;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(86,120,229,0.35);transition:all 0.2s;">
+                    <i class="fa fa-ticket-alt"></i>
+                    تذكرتي
+                </button>
+            </div>
+
+            <!-- ===== قسم شراء تذكرة جديدة ===== -->
+            <div style="margin-bottom:14px;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+                    <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(86,120,229,0.15),transparent);"></div>
+                    <div style="font-size:12px;font-weight:800;color:#7a8fa3;white-space:nowrap;"><i class="fa fa-plus-circle" style="color:#5678E5;margin-left:4px;"></i>احجز تذكرة جديدة</div>
+                    <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(86,120,229,0.15),transparent);"></div>
+                </div>
+            </div>
+
+            <!-- بطاقة البحث عن رحلة -->
+            <div class="info-card" style="margin-bottom:14px;">
+                <div class="info-card-title"><i class="fa fa-search"></i>ابحث عن رحلة</div>
+
+                <!-- نوع الرحلة -->
+                <div style="display:flex;gap:8px;margin-bottom:14px;">
+                    <button class="trip-tab active" id="btnOneWay" onclick="selectTripType('oneway')" style="flex:1;padding:9px;border-radius:12px;border:1.5px solid rgba(86,120,229,0.12);background:#5678E5;color:#fff;font-family:Tajawal,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">ذهاب فقط</button>
+                    <button class="trip-tab" id="btnRoundTrip" onclick="selectTripType('round')" style="flex:1;padding:9px;border-radius:12px;border:1.5px solid rgba(86,120,229,0.12);background:rgba(255,255,255,0.7);color:#7a8fa3;font-family:Tajawal,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">ذهاب وعودة</button>
+                </div>
+
+                <!-- من / إلى -->
+                <div style="position:relative;margin-bottom:12px;">
+                    <div class="location-input-row" style="margin-bottom:8px;">
+                        <div class="loc-dot from"></div>
+                        <input class="location-input" type="text" id="fromCity" placeholder="من: مدينة المغادرة" value="الرياض (RUH)" style="flex:1;">
+                    </div>
+                    <div onclick="swapCities()" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:32px;height:32px;border-radius:50%;background:#5678E5;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 12px rgba(86,120,229,0.3);z-index:2;">
+                        <i class="fa fa-exchange-alt" style="color:#fff;font-size:12px;"></i>
+                    </div>
+                    <div class="location-input-row" style="margin-bottom:0;">
+                        <div class="loc-dot to"></div>
+                        <input class="location-input" type="text" id="toCity" placeholder="إلى: مدينة الوصول" style="flex:1;">
+                    </div>
+                </div>
+
+                <!-- التواريخ -->
+                <div class="time-row" style="margin-bottom:12px;">
+                    <div>
+                        <div style="font-size:10px;font-weight:700;color:#7a8fa3;margin-bottom:4px;"><i class="fa fa-calendar-alt" style="color:#5678E5;margin-left:4px;"></i>تاريخ الذهاب</div>
+                        <input type="date" class="time-select" id="departDate" style="width:100%;">
+                    </div>
+                    <div id="returnDateWrap" style="display:none;">
+                        <div style="font-size:10px;font-weight:700;color:#7a8fa3;margin-bottom:4px;"><i class="fa fa-calendar-check" style="color:#3bb88b;margin-left:4px;"></i>تاريخ العودة</div>
+                        <input type="date" class="time-select" id="returnDate" style="width:100%;">
+                    </div>
+                </div>
+
+                <!-- عدد المسافرين -->
+                <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.9);border:1.5px solid rgba(86,120,229,0.12);border-radius:12px;padding:10px 14px;margin-bottom:14px;">
+                    <div style="font-size:13px;font-weight:700;color:#3d4e61;"><i class="fa fa-users" style="color:#5678E5;margin-left:6px;"></i>المسافرون</div>
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <button onclick="changePassengers(-1)" style="width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(86,120,229,0.2);background:rgba(86,120,229,0.06);color:#5678E5;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;">−</button>
+                        <span id="passengerCount" style="font-size:16px;font-weight:800;color:#2c3e50;min-width:20px;text-align:center;">1</span>
+                        <button onclick="changePassengers(1)" style="width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(86,120,229,0.2);background:rgba(86,120,229,0.06);color:#5678E5;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;">+</button>
+                    </div>
+                </div>
+
+                <!-- درجة السفر -->
+                <div style="margin-bottom:14px;">
+                    <div style="font-size:11px;font-weight:700;color:#7a8fa3;margin-bottom:8px;"><i class="fa fa-chair" style="color:#5678E5;margin-left:4px;"></i>درجة السفر</div>
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+                        <button class="cabin-btn active" id="cabin-economy" onclick="selectCabin('economy')" style="padding:8px 4px;border-radius:10px;border:1.5px solid #5678E5;background:rgba(86,120,229,0.08);font-family:Tajawal,sans-serif;font-size:11px;font-weight:700;color:#5678E5;cursor:pointer;">اقتصادية</button>
+                        <button class="cabin-btn" id="cabin-business" onclick="selectCabin('business')" style="padding:8px 4px;border-radius:10px;border:1.5px solid rgba(86,120,229,0.12);background:rgba(255,255,255,0.7);font-family:Tajawal,sans-serif;font-size:11px;font-weight:700;color:#7a8fa3;cursor:pointer;">رجال أعمال</button>
+                        <button class="cabin-btn" id="cabin-first" onclick="selectCabin('first')" style="padding:8px 4px;border-radius:10px;border:1.5px solid rgba(86,120,229,0.12);background:rgba(255,255,255,0.7);font-family:Tajawal,sans-serif;font-size:11px;font-weight:700;color:#7a8fa3;cursor:pointer;">أولى</button>
+                    </div>
+                </div>
+
+                <!-- زر البحث -->
+                <button onclick="searchFlights()" style="width:100%;padding:14px;border-radius:16px;border:none;background:linear-gradient(135deg,#5678E5,#7B9FEC);color:#fff;font-family:Tajawal,sans-serif;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(86,120,229,0.30);display:flex;align-items:center;justify-content:center;gap:10px;transition:all 0.3s;">
+                    <i class="fa fa-search"></i> ابحث عن رحلات
+                </button>
+            </div>
+
+            <!-- نتائج البحث (مخفية في البداية) -->
+            <div id="flightResults" style="display:none;">
+                <div style="font-size:13px;font-weight:800;color:#3d4e61;margin-bottom:12px;"><i class="fa fa-list" style="color:#5678E5;margin-left:6px;"></i>الرحلات المتاحة</div>
+
+                <!-- بطاقة رحلة 1 -->
+                <div class="flight-result-card" onclick="selectFlight(this,'SV123','الخطوط السعودية','10:25','13:45','2,150')" style="background:rgba(255,255,255,0.88);border-radius:18px;padding:16px;border:2px solid transparent;box-shadow:0 4px 18px rgba(86,120,229,0.07);margin-bottom:12px;cursor:pointer;transition:all 0.25s;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#5678E5,#7B9FEC);display:flex;align-items:center;justify-content:center;"><i class="fa fa-plane" style="color:#fff;font-size:14px;"></i></div>
+                            <div>
+                                <div style="font-size:13px;font-weight:800;color:#2c3e50;">الخطوط السعودية</div>
+                                <div style="font-size:10px;color:#7a8fa3;">SV123 · مباشر</div>
+                            </div>
+                        </div>
+                        <div style="text-align:left;">
+                            <div style="font-size:18px;font-weight:800;color:#5678E5;">2,150 <small style="font-size:11px;color:#7a8fa3;">ر.س</small></div>
+                            <div style="font-size:10px;color:#7a8fa3;">للشخص</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;">
+                        <div style="text-align:right;"><div style="font-size:18px;font-weight:800;color:#2c3e50;">10:25</div><div style="font-size:10px;color:#7a8fa3;">RUH</div></div>
+                        <div style="text-align:center;flex:1;padding:0 12px;">
+                            <div style="font-size:10px;color:#aab7c4;margin-bottom:4px;">3س 20د</div>
+                            <div style="height:1px;background:linear-gradient(90deg,#5678E5,#7B9FEC);position:relative;"><div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);"><i class="fa fa-plane" style="color:#5678E5;font-size:10px;transform:rotate(90deg);"></i></div></div>
+                            <div style="font-size:10px;color:#3bb88b;margin-top:4px;">مباشر</div>
+                        </div>
+                        <div style="text-align:left;"><div style="font-size:18px;font-weight:800;color:#2c3e50;">13:45</div><div style="font-size:10px;color:#7a8fa3;">DXB</div></div>
+                    </div>
+                </div>
+
+                <!-- بطاقة رحلة 2 -->
+                <div class="flight-result-card" onclick="selectFlight(this,'FZ456','فلاي دبي','14:10','17:30','1,890')" style="background:rgba(255,255,255,0.88);border-radius:18px;padding:16px;border:2px solid transparent;box-shadow:0 4px 18px rgba(86,120,229,0.07);margin-bottom:12px;cursor:pointer;transition:all 0.25s;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#e17055,#fd79a8);display:flex;align-items:center;justify-content:center;"><i class="fa fa-plane" style="color:#fff;font-size:14px;"></i></div>
+                            <div>
+                                <div style="font-size:13px;font-weight:800;color:#2c3e50;">فلاي دبي</div>
+                                <div style="font-size:10px;color:#7a8fa3;">FZ456 · مباشر</div>
+                            </div>
+                        </div>
+                        <div style="text-align:left;">
+                            <div style="font-size:18px;font-weight:800;color:#5678E5;">1,890 <small style="font-size:11px;color:#7a8fa3;">ر.س</small></div>
+                            <div style="font-size:10px;color:#7a8fa3;">للشخص</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;">
+                        <div style="text-align:right;"><div style="font-size:18px;font-weight:800;color:#2c3e50;">14:10</div><div style="font-size:10px;color:#7a8fa3;">RUH</div></div>
+                        <div style="text-align:center;flex:1;padding:0 12px;">
+                            <div style="font-size:10px;color:#aab7c4;margin-bottom:4px;">3س 20د</div>
+                            <div style="height:1px;background:linear-gradient(90deg,#e17055,#fd79a8);position:relative;"><div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);"><i class="fa fa-plane" style="color:#e17055;font-size:10px;transform:rotate(90deg);"></i></div></div>
+                            <div style="font-size:10px;color:#3bb88b;margin-top:4px;">مباشر</div>
+                        </div>
+                        <div style="text-align:left;"><div style="font-size:18px;font-weight:800;color:#2c3e50;">17:30</div><div style="font-size:10px;color:#7a8fa3;">DXB</div></div>
+                    </div>
+                </div>
+
+                <!-- بطاقة رحلة 3 -->
+                <div class="flight-result-card" onclick="selectFlight(this,'EK789','طيران الإمارات','18:45','22:05','2,890')" style="background:rgba(255,255,255,0.88);border-radius:18px;padding:16px;border:2px solid transparent;box-shadow:0 4px 18px rgba(86,120,229,0.07);margin-bottom:12px;cursor:pointer;transition:all 0.25s;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#00b894,#55efc4);display:flex;align-items:center;justify-content:center;"><i class="fa fa-plane" style="color:#fff;font-size:14px;"></i></div>
+                            <div>
+                                <div style="font-size:13px;font-weight:800;color:#2c3e50;">طيران الإمارات</div>
+                                <div style="font-size:10px;color:#7a8fa3;">EK789 · مباشر</div>
+                            </div>
+                        </div>
+                        <div style="text-align:left;">
+                            <div style="font-size:18px;font-weight:800;color:#5678E5;">2,890 <small style="font-size:11px;color:#7a8fa3;">ر.س</small></div>
+                            <div style="font-size:10px;color:#7a8fa3;">للشخص</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;">
+                        <div style="text-align:right;"><div style="font-size:18px;font-weight:800;color:#2c3e50;">18:45</div><div style="font-size:10px;color:#7a8fa3;">RUH</div></div>
+                        <div style="text-align:center;flex:1;padding:0 12px;">
+                            <div style="font-size:10px;color:#aab7c4;margin-bottom:4px;">3س 20د</div>
+                            <div style="height:1px;background:linear-gradient(90deg,#00b894,#55efc4);position:relative;"><div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);"><i class="fa fa-plane" style="color:#00b894;font-size:10px;transform:rotate(90deg);"></i></div></div>
+                            <div style="font-size:10px;color:#3bb88b;margin-top:4px;">مباشر</div>
+                        </div>
+                        <div style="text-align:left;"><div style="font-size:18px;font-weight:800;color:#2c3e50;">22:05</div><div style="font-size:10px;color:#7a8fa3;">DXB</div></div>
+                    </div>
+                </div>
+
+                <!-- زر الحجز -->
+                <div id="bookBtnWrap" style="display:none;margin-top:4px;">
+                    <div id="selectedFlightSummary" style="background:linear-gradient(135deg,rgba(86,120,229,0.08),rgba(123,159,236,0.05));border-radius:14px;padding:12px 16px;margin-bottom:12px;border:1px solid rgba(86,120,229,0.12);">
+                        <div style="font-size:12px;font-weight:700;color:#5678E5;margin-bottom:4px;"><i class="fa fa-check-circle" style="margin-left:6px;"></i>الرحلة المختارة</div>
+                        <div id="selectedFlightText" style="font-size:13px;font-weight:800;color:#2c3e50;"></div>
+                    </div>
+                    <button onclick="proceedToPayment()" style="width:100%;padding:15px;border-radius:18px;border:none;background:linear-gradient(135deg,#5678E5,#7B9FEC);color:#fff;font-family:Tajawal,sans-serif;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(86,120,229,0.30);display:flex;align-items:center;justify-content:center;gap:10px;">
+                        <i class="fa fa-credit-card"></i> المتابعة للدفع
+                    </button>
+                </div>
+            </div>
+
+            <!-- خطوات الحجز -->
+            <div class="info-card" style="margin-bottom:14px;">
+                <div class="info-card-title"><i class="fa fa-info-circle"></i>كيف تحجز تذكرتك؟</div>
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                    <div style="display:flex;align-items:flex-start;gap:12px;">
+                        <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#5678E5,#7B9FEC);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="color:#fff;font-size:13px;font-weight:800;">1</span></div>
+                        <div><div style="font-size:13px;font-weight:700;color:#2c3e50;">اختر وجهتك</div><div style="font-size:11px;color:#7a8fa3;margin-top:2px;">أدخل مدينة المغادرة والوصول</div></div>
+                    </div>
+                    <div style="display:flex;align-items:flex-start;gap:12px;">
+                        <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#9b8cf7,#a29bfe);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="color:#fff;font-size:13px;font-weight:800;">2</span></div>
+                        <div><div style="font-size:13px;font-weight:700;color:#2c3e50;">اختر الرحلة</div><div style="font-size:11px;color:#7a8fa3;margin-top:2px;">قارن الأسعار والمواعيد</div></div>
+                    </div>
+                    <div style="display:flex;align-items:flex-start;gap:12px;">
+                        <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#00b894,#55efc4);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="color:#fff;font-size:13px;font-weight:800;">3</span></div>
+                        <div><div style="font-size:13px;font-weight:700;color:#2c3e50;">أكمل الدفع</div><div style="font-size:11px;color:#7a8fa3;margin-top:2px;">ادفع بأمان وتلقّ تذكرتك فوراً</div></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ===== صفحة تذكرتي ===== -->
+    <div class="tab-page" id="page-my-ticket">
+        <div class="page-back-bar">
+            <div class="page-back-btn" onclick="goBackToTickets()"><i class="fa fa-arrow-right"></i></div>
+            <div class="page-back-title">تذكرتي</div>
+        </div>
+        <div class="tkt-header">
+            <div class="tkt-header-title">تذكرتي</div>
             <button class="tkt-bell-btn">
                 <i class="fa fa-bell"></i>
                 <div class="tkt-bell-dot"></div>
@@ -5148,7 +5463,10 @@
         </div>
     </div>
 
-        <!-- ===== صفحة طلب مساعدة ===== -->
+                </div>
+    </div>
+
+    <!-- ===== صفحة طلب مساعدة<!-- ===== صفحة طلب مساعدة ===== -->
     <div class="tab-page" id="page-help">
         <div class="page-back-bar">
             <div class="page-back-btn" onclick="goBackToHome()"><i class="fa fa-arrow-right"></i></div>
